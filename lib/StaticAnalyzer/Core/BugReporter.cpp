@@ -58,6 +58,7 @@
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/raw_ostream.h"
+#include "InternalInfoImplementations.h"
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
@@ -1872,6 +1873,29 @@ static void dropFunctionEntryEdge(PathPieces &Path, LocationContextMap &LCM,
   Path.pop_front();
 }
 
+static void AddInternalInfoToPathDiagnosticPiece(
+                     PathPieces &Pieces, const ExplodedNode *N,
+                     PathDiagnosticBuilder &PDB) {
+
+  if (Pieces.empty())
+    return;
+
+  InternalInfoMap &Map = Pieces.front()->InternalInfos;
+  auto &Opts = PDB.getBugReporter().getAnalyzerOptions();
+  ProgramStateRef State = N->getState();
+
+  if (Opts.ShouldDumpStateInfo) {
+    StateInfo &SI = Map.getOrInsert<StateInfo>();
+    if (SI.isEmpty())
+      SI.addStateInfoFromState(State);
+  }
+
+  if (Opts.ShouldDumpConstraintInfo) {
+    ConstraintInfo &CurrC = Map.getOrInsert<ConstraintInfo>();
+    CurrC.addConstraintsFromState(State);
+  }
+}
+
 using VisitorsDiagnosticsTy = llvm::DenseMap<const ExplodedNode *,
                    std::vector<std::shared_ptr<PathDiagnosticPiece>>>;
 
@@ -1928,15 +1952,18 @@ static std::unique_ptr<PathDiagnostic> generatePathDiagnosticForConsumer(
     } else {
       LastPiece = BugReporterVisitor::getDefaultEndPath(PDB, ErrorNode, *R);
     }
+    AddInternalInfoToPathDiagnosticPiece(PD->getActivePath(), ErrorNode, PDB);
     PD->setEndOfPath(LastPiece);
   }
 
   PathDiagnosticLocation PrevLoc = PD->getLocation();
   const ExplodedNode *NextNode = ErrorNode->getFirstPred();
   while (NextNode) {
-    if (GenerateDiagnostics)
+    if (GenerateDiagnostics) {
       generatePathDiagnosticsForNode(
           NextNode, *PD, PrevLoc, PDB, LCM, CallStack, IE, AddPathEdges);
+      AddInternalInfoToPathDiagnosticPiece(PD->getActivePath(), NextNode, PDB);
+    }
 
     auto VisitorNotes = VisitorsDiagnostics.find(NextNode);
     NextNode = NextNode->getFirstPred();
