@@ -571,6 +571,8 @@ static SourceLocation getValidSourceLocation(const Stmt* S,
     } while (!L.isValid());
   }
 
+  // FIXME: Ironically, this assert actually fails in some cases.
+  //assert(L.isValid());
   return L;
 }
 
@@ -671,7 +673,13 @@ PathDiagnosticLocation::createConditionalColonLoc(
 PathDiagnosticLocation
 PathDiagnosticLocation::createMemberLoc(const MemberExpr *ME,
                                         const SourceManager &SM) {
-  return PathDiagnosticLocation(ME->getMemberLoc(), SM, SingleLocK);
+
+  assert(ME->getMemberLoc().isValid() || ME->getBeginLoc().isValid());
+
+  if (ME->getMemberLoc().isValid())
+    return PathDiagnosticLocation(ME->getMemberLoc(), SM, SingleLocK);
+
+  return PathDiagnosticLocation(ME->getBeginLoc(), SM, SingleLocK);
 }
 
 PathDiagnosticLocation

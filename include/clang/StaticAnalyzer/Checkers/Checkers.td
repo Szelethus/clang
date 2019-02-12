@@ -1017,6 +1017,10 @@ def ExplodedGraphViewer : Checker<"ViewExplodedGraph">,
   HelpText<"View Exploded Graphs using GraphViz">,
   Documentation<NotDocumented>;
 
+def ReportStmts : Checker<"ReportStmts">,
+  HelpText<"Emits a warning for every statement.">,
+  Documentation<NotDocumented>;
+
 } // end "debug"
 
 
