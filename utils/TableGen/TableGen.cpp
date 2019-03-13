@@ -47,12 +47,13 @@ enum ActionType {
   GenClangCommentNodes,
   GenClangDeclNodes,
   GenClangStmtNodes,
-  GenClangSACheckers,
   GenClangCommentHTMLTags,
   GenClangCommentHTMLTagsProperties,
   GenClangCommentHTMLNamedCharacterReferences,
   GenClangCommentCommandInfo,
   GenClangCommentCommandList,
+  GenClangSACheckers,
+  GenClangSAOptions,
   GenArmNeon,
   GenArmFP16,
   GenArmNeonSema,
@@ -130,6 +131,8 @@ cl::opt<ActionType> Action(
                    "Generate Clang AST statement nodes"),
         clEnumValN(GenClangSACheckers, "gen-clang-sa-checkers",
                    "Generate Clang Static Analyzer checkers"),
+        clEnumValN(GenClangSAOptions, "gen-clang-sa-options",
+                   "Generate Clang Static Analyzer command line options"),
         clEnumValN(GenClangCommentHTMLTags, "gen-clang-comment-html-tags",
                    "Generate efficient matchers for HTML tag "
                    "names that are used in documentation comments"),
@@ -250,6 +253,9 @@ bool ClangTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenClangSACheckers:
     EmitClangSACheckers(Records, OS);
+    break;
+  case GenClangSAOptions:
+    EmitClangSAOptions(Records, OS);
     break;
   case GenClangCommentHTMLTags:
     EmitClangCommentHTMLTags(Records, OS);

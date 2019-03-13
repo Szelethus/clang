@@ -231,6 +231,11 @@ public:
                    << (Keys[I]->second.empty() ? "\"\"" : Keys[I]->second)
                    << '\n';
 
+#define ANALYZER_FRONTEND_OPTION(PREFIX, NAME, ID, ALIAS, HELPTEXT) \
+    llvm::errs() << NAME << '\n';
+
+#include "clang/StaticAnalyzer/Frontend/Options.def"
+
     llvm::errs() << "[stats]\n" << "num-entries = " << Keys.size() << '\n';
   }
 };

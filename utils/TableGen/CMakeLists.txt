@@ -10,6 +10,7 @@ add_tablegen(clang-tblgen CLANG
   ClangDiagnosticsEmitter.cpp
   ClangOptionDocEmitter.cpp
   ClangSACheckersEmitter.cpp
+  ClangSAOptionsEmitter.cpp
   NeonEmitter.cpp
   TableGen.cpp
   )

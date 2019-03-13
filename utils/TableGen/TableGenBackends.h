@@ -65,6 +65,7 @@ void EmitClangDiagsIndexName(llvm::RecordKeeper &Records,
                              llvm::raw_ostream &OS);
 
 void EmitClangSACheckers(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
+void EmitClangSAOptions(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
 
 void EmitClangCommentHTMLTags(llvm::RecordKeeper &Records,
                               llvm::raw_ostream &OS);
