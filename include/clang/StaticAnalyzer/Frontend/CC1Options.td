@@ -1,4 +1,4 @@
-//===--- CC1Options.td - Options for clang -cc1 ---------------------------===//
+//===--- CC1Options.td - Frontend options for Clang Static Analyzer -------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -6,7 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-//  This file defines the options accepted by clang -cc1 and clang -cc1as.
+//  This file defines frontend options for the Clang Static Analyzer.
 //
 //===----------------------------------------------------------------------===//
 

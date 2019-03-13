@@ -1,4 +1,4 @@
-//===--- Options.td - Options for clang -----------------------------------===//
+//===--- OptionBase.td - Options for clang --------------------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -6,7 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-//  This file defines the options accepted by clang.
+//  This file defines the structure of clang command line options.
 //
 //===----------------------------------------------------------------------===//
 
@@ -73,5 +73,3 @@ class IgnoredGCCCompat : Flags<[HelpHidden]> {}
 
 def Action_Group : OptionGroup<"<action group>">, DocName<"Actions">,
                    DocBrief<[{The action to perform on the input.}]>;
-
-
