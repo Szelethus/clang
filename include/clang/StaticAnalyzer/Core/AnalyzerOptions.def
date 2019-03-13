@@ -6,8 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-//  This file defines the options that configure the analyzer, include regular
-//  frontend flags, and the analyzer specifig -analyzer-config ones.
+//  This file defines the analyzer options avaible with -analyzer-config.
 //
 //===----------------------------------------------------------------------===//
 
@@ -28,22 +27,6 @@ define both 'ANALYZER_OPTION' and 'ANALYZER_OPTION_DEPENDS_ON_USER_MODE' macros!
 #error If you didnt include this file with the intent of generating methods, \
 define both 'ANALYZER_OPTION' and 'ANALYZER_OPTION_DEPENDS_ON_USER_MODE' macros!
 #endif
-#endif
-
-#ifndef ANALYZER_FRONTEND_OPTION
-/// Create a new analyzer option, but dont generate a method for it in
-/// AnalyzerOptions. It's value depends on the option "user-mode".
-///
-///   TYPE - The type of the option object that will be stored in
-///          AnalyzerOptions. This file is expected to be icluded in translation
-///          units where AnalyzerOptions.h is included, so types from that
-///          header should be used.
-///   NAME - The name of the option object.
-///   CMDFLAG - The command line flag for the option.
-///             (-analyzer-config CMDFLAG=VALUE)
-///   DESC - Description of the flag.
-///   DEFAULT_VAL - The default value for CMDFLAG.
-#define ANALYZER_FRONTEND_OPTION(TYPE, NAME, CMDFLAG, DESC, DEFAULT_VAL)
 #endif
 
 #ifndef ANALYZER_OPTION
@@ -81,10 +64,6 @@ define both 'ANALYZER_OPTION' and 'ANALYZER_OPTION_DEPENDS_ON_USER_MODE' macros!
 #define ANALYZER_OPTION_DEPENDS_ON_USER_MODE(TYPE, NAME, CMDFLAG, DESC,        \
                                              SHALLOW_VAL, DEEP_VAL)
 #endif
-
-//===----------------------------------------------------------------------===//
-// Boolean analyzer options.
-//===----------------------------------------------------------------------===//
 
 //===----------------------------------------------------------------------===//
 // The "mode" option. Since some options depend on this, we list it on top of
