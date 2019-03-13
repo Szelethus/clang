@@ -12,6 +12,9 @@ add_clang_library(clangStaticAnalyzerFrontend
   ModelConsumer.cpp
   ModelInjector.cpp
 
+  DEPENDS
+  ClangStaticAnalyzerOptions
+
   LINK_LIBS
   clangAST
   clangAnalysis

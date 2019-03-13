@@ -29,7 +29,7 @@ def target_abi : Separate<["-"], "target-abi">,
 def target_sdk_version_EQ : Joined<["-"], "target-sdk-version=">,
   HelpText<"The version of target SDK used for compilation">;
 
-}
+} // let Flags = [CC1Option, CC1AsOption, NoDriverOption]
 
 def target_linker_version : Separate<["-"], "target-linker-version">,
   HelpText<"Target linker version">;
@@ -40,114 +40,6 @@ def mfpmath : Separate<["-"], "mfpmath">,
 def fpadding_on_unsigned_fixed_point : Flag<["-"], "fpadding-on-unsigned-fixed-point">,
   HelpText<"Force each unsigned fixed point type to have an extra bit of padding to align their scales with those of signed fixed point types">;
 def fno_padding_on_unsigned_fixed_point : Flag<["-"], "fno-padding-on-unsigned-fixed-point">;
-
-//===----------------------------------------------------------------------===//
-// Analyzer Options
-//===----------------------------------------------------------------------===//
-
-def analysis_UnoptimizedCFG : Flag<["-"], "unoptimized-cfg">,
-  HelpText<"Generate unoptimized CFGs for all analyses">;
-def analysis_CFGAddImplicitDtors : Flag<["-"], "cfg-add-implicit-dtors">,
-  HelpText<"Add C++ implicit destructors to CFGs for all analyses">;
-
-def analyzer_store : Separate<["-"], "analyzer-store">,
-  HelpText<"Source Code Analysis - Abstract Memory Store Models">;
-def analyzer_store_EQ : Joined<["-"], "analyzer-store=">, Alias<analyzer_store>;
-
-def analyzer_constraints : Separate<["-"], "analyzer-constraints">,
-  HelpText<"Source Code Analysis - Symbolic Constraint Engines">;
-def analyzer_constraints_EQ : Joined<["-"], "analyzer-constraints=">,
-  Alias<analyzer_constraints>;
-
-def analyzer_output : Separate<["-"], "analyzer-output">,
-  HelpText<"Source Code Analysis - Output Options">;
-def analyzer_output_EQ : Joined<["-"], "analyzer-output=">,
-  Alias<analyzer_output>;
-
-def analyzer_purge : Separate<["-"], "analyzer-purge">,
-  HelpText<"Source Code Analysis - Dead Symbol Removal Frequency">;
-def analyzer_purge_EQ : Joined<["-"], "analyzer-purge=">, Alias<analyzer_purge>;
-
-def analyzer_opt_analyze_headers : Flag<["-"], "analyzer-opt-analyze-headers">,
-  HelpText<"Force the static analyzer to analyze functions defined in header files">;
-def analyzer_opt_analyze_nested_blocks : Flag<["-"], "analyzer-opt-analyze-nested-blocks">,
-  HelpText<"Analyze the definitions of blocks in addition to functions">;
-def analyzer_display_progress : Flag<["-"], "analyzer-display-progress">,
-  HelpText<"Emit verbose output about the analyzer's progress">;
-def analyze_function : Separate<["-"], "analyze-function">,
-  HelpText<"Run analysis on specific function (for C++ include parameters in name)">;
-def analyze_function_EQ : Joined<["-"], "analyze-function=">, Alias<analyze_function>;
-def trim_egraph : Flag<["-"], "trim-egraph">,
-  HelpText<"Only show error-related paths in the analysis graph">;
-def analyzer_viz_egraph_graphviz : Flag<["-"], "analyzer-viz-egraph-graphviz">,
-  HelpText<"Display exploded graph using GraphViz">;
-def analyzer_dump_egraph : Separate<["-"], "analyzer-dump-egraph">,
-  HelpText<"Dump exploded graph to the specified file">;
-def analyzer_dump_egraph_EQ : Joined<["-"], "analyzer-dump-egraph=">, Alias<analyzer_dump_egraph>;
-
-def analyzer_inline_max_stack_depth : Separate<["-"], "analyzer-inline-max-stack-depth">,
-  HelpText<"Bound on stack depth while inlining (4 by default)">;
-def analyzer_inline_max_stack_depth_EQ : Joined<["-"], "analyzer-inline-max-stack-depth=">,
-  Alias<analyzer_inline_max_stack_depth>;
-
-def analyzer_inlining_mode : Separate<["-"], "analyzer-inlining-mode">,
-  HelpText<"Specify the function selection heuristic used during inlining">;
-def analyzer_inlining_mode_EQ : Joined<["-"], "analyzer-inlining-mode=">, Alias<analyzer_inlining_mode>;
-
-def analyzer_disable_retry_exhausted : Flag<["-"], "analyzer-disable-retry-exhausted">,
-  HelpText<"Do not re-analyze paths leading to exhausted nodes with a different strategy (may decrease code coverage)">;
-
-def analyzer_max_loop : Separate<["-"], "analyzer-max-loop">,
-  HelpText<"The maximum number of times the analyzer will go through a loop">;
-def analyzer_stats : Flag<["-"], "analyzer-stats">,
-  HelpText<"Print internal analyzer statistics.">;
-
-def analyzer_checker : Separate<["-"], "analyzer-checker">,
-  HelpText<"Choose analyzer checkers to enable">,
-  ValuesCode<[{
-    const char *Values =
-    #define GET_CHECKERS
-    #define CHECKER(FULLNAME, CLASS, HT, DOC_URI, IS_HIDDEN)  FULLNAME ","
-    #include "clang/StaticAnalyzer/Checkers/Checkers.inc"
-    #undef GET_CHECKERS
-    #define GET_PACKAGES
-    #define PACKAGE(FULLNAME)  FULLNAME ","
-    #include "clang/StaticAnalyzer/Checkers/Checkers.inc"
-    #undef GET_PACKAGES
-    ;
-  }]>;
-def analyzer_checker_EQ : Joined<["-"], "analyzer-checker=">,
-  Alias<analyzer_checker>;
-
-def analyzer_disable_checker : Separate<["-"], "analyzer-disable-checker">,
-  HelpText<"Choose analyzer checkers to disable">;
-def analyzer_disable_checker_EQ : Joined<["-"], "analyzer-disable-checker=">,
-  Alias<analyzer_disable_checker>;
-
-def analyzer_disable_all_checks : Flag<["-"], "analyzer-disable-all-checks">,
-  HelpText<"Disable all static analyzer checks">;
-
-def analyzer_checker_help : Flag<["-"], "analyzer-checker-help">,
-  HelpText<"Display the list of analyzer checkers that are available">;
-
-def analyzer_checker_help_hidden : Flag<["-"], "analyzer-checker-help-hidden">,
-  HelpText<"Display the list of analyzer checkers that are available, "
-           "including modeling checkers">;
-
-def analyzer_config_help : Flag<["-"], "analyzer-config-help">,
-  HelpText<"Display the list of -analyzer-config options">;
-
-def analyzer_list_enabled_checkers : Flag<["-"], "analyzer-list-enabled-checkers">,
-  HelpText<"Display the list of enabled analyzer checkers">;
-
-def analyzer_config : Separate<["-"], "analyzer-config">,
-  HelpText<"Choose analyzer options to enable">;
-
-def analyzer_config_compatibility_mode : Separate<["-"], "analyzer-config-compatibility-mode">,
-  HelpText<"Don't emit errors on invalid analyzer-config inputs">;
-
-def analyzer_config_compatibility_mode_EQ : Joined<["-"], "analyzer-config-compatibility-mode=">,
-  Alias<analyzer_config_compatibility_mode>;
 
 //===----------------------------------------------------------------------===//
 // Migrator Options
@@ -194,7 +86,7 @@ def mrelocation_model : Separate<["-"], "mrelocation-model">,
   HelpText<"The relocation model to use">, Values<"static,pic,ropi,rwpi,ropi-rwpi,dynamic-no-pic">;
 def fno_math_builtin : Flag<["-"], "fno-math-builtin">,
   HelpText<"Disable implicit builtin knowledge of math functions">;
-}
+} // let Flags = [CC1Option, CC1AsOption, NoDriverOption]
 
 def disable_llvm_verifier : Flag<["-"], "disable-llvm-verifier">,
   HelpText<"Don't run the LLVM IR verifier pass">;
@@ -595,7 +487,7 @@ def migrate : Flag<["-"], "migrate">,
   HelpText<"Migrate source code">;
 def compiler_options_dump : Flag<["-"], "compiler-options-dump">,
   HelpText<"Dump the compiler configuration options">;
-}
+} // let Group = Action_Group
 
 def emit_llvm_uselists : Flag<["-"], "emit-llvm-uselists">,
   HelpText<"Preserve order of LLVM use-lists when serializing">;
@@ -663,7 +555,7 @@ def main_file_name : Separate<["-"], "main-file-name">,
 def split_dwarf_file : Separate<["-"], "split-dwarf-file">,
   HelpText<"File name to use for split dwarf debug info output">;
 
-}
+} // let Flags = [CC1Option, CC1AsOption, NoDriverOption]
 
 def fblocks_runtime_optional : Flag<["-"], "fblocks-runtime-optional">,
   HelpText<"Weakly link in the blocks runtime">;
@@ -855,7 +747,7 @@ def fopenmp_host_ir_file_path : Separate<["-"], "fopenmp-host-ir-file-path">,
 def fsycl_is_device : Flag<["-"], "fsycl-is-device">,
   HelpText<"Generate code for SYCL device.">;
 
-} // let Flags = [CC1Option]
+} // let Flags = [CC1Option, NoDriverOption]
 
 //===----------------------------------------------------------------------===//
 // cc1as-only Options
@@ -885,4 +777,10 @@ def dwarf_debug_producer : Separate<["-"], "dwarf-debug-producer">,
 
 def defsym : Separate<["-"], "defsym">,
   HelpText<"Define a value for a symbol">;
-} // let Flags = [CC1AsOption]
+} // let Flags = [CC1AsOption, NoDriverOption]
+
+//===----------------------------------------------------------------------===//
+// Analyzer Options
+//===----------------------------------------------------------------------===//
+
+include "clang/StaticAnalyzer/Frontend/CC1Options.td"
