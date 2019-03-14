@@ -108,8 +108,8 @@ public:
       State_Enabled
     };
 
-    InitializationFunction Initialize;
-    ShouldRegisterFunction ShouldRegister;
+    InitializationFunction Initialize = nullptr;
+    ShouldRegisterFunction ShouldRegister = nullptr;
     StringRef FullName;
     StringRef Desc;
     StringRef DocumentationUri;
