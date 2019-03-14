@@ -232,7 +232,7 @@ public:
                    << '\n';
 
 #define ANALYZER_FRONTEND_OPTION(NAME, ID, HELPTEXT) \
-    llvm::errs() << NAME << '\n';
+    llvm::errs() << mgr.options.ID << NAME << '\n';
 
 #include "clang/StaticAnalyzer/Frontend/Options.def"
 

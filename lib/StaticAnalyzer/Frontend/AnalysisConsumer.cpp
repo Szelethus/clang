@@ -693,7 +693,7 @@ std::string AnalysisConsumer::getFunctionName(const Decl *D) {
 
 AnalysisConsumer::AnalysisMode
 AnalysisConsumer::getModeForDecl(Decl *D, AnalysisMode Mode) {
-  if (!Opts->AnalyzeSpecificFunction.empty() &&
+  if (!Opts->AnalyzeFunction.empty() &&
       getFunctionName(D) != Opts->AnalyzeSpecificFunction)
     return AM_None;
 

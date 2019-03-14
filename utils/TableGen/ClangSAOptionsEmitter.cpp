@@ -153,9 +153,29 @@ void clang::EmitClangSAOptions(RecordKeeper &Records, raw_ostream &OS) {
     // The option string.
     write_cstring(OS, R.getValueAsString("Name"));
 
+    OS << ", ";
     // The option identifier name.
-    OS  << ", "<< getOptionName(R);
-    
+    std::string IDBuf = getOptionName(R);
+    assert(!IDBuf.empty());
+    StringRef Tmp(IDBuf);
+
+    OS << Tmp.take_front(1).upper();    
+    Tmp = Tmp.drop_front(1);
+
+    while (Tmp.size() > 2) {
+      char C = Tmp.front();
+      if (C == '_') {
+        OS << Tmp.substr(1, 1).upper();
+        Tmp = Tmp.drop_front(2);
+        continue;
+      }
+
+      OS << Tmp[0];
+      Tmp = Tmp.drop_front(1);
+    }
+
+    OS << Tmp;
+
     // The option help text.
     if (!isa<UnsetInit>(R.getValueInit("HelpText"))) {
       OS << ",\n";

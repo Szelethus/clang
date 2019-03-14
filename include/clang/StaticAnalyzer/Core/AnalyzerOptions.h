@@ -177,7 +177,7 @@ public:
   AnalysisDiagClients AnalysisDiagOpt = PD_HTML;
   AnalysisPurgeMode AnalysisPurgeOpt = PurgeStmt;
 
-  std::string AnalyzeSpecificFunction;
+  std::string AnalyzeFunction;
 
   /// File path to which the exploded graph should be dumped.
   std::string DumpExplodedGraphTo;
