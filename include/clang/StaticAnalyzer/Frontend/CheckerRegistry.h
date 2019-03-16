@@ -126,19 +126,10 @@ public:
       return State == StateFromCmdLine::State_Disabled && ShouldRegister(LO);
     }
 
-    // Since each checker must have a different full name, we can identify
-    // CheckerInfo objects by them.
-    bool operator==(const CheckerInfo &Rhs) const {
-      return FullName == Rhs.FullName;
-    }
-
     CheckerInfo(InitializationFunction Fn, ShouldRegisterFunction sfn,
                 StringRef Name, StringRef Desc, StringRef DocsUri)
         : Initialize(Fn), ShouldRegister(sfn), FullName(Name), Desc(Desc),
           DocumentationUri(DocsUri) {}
-
-    // Used for lower_bound.
-    explicit CheckerInfo(StringRef FullName) : FullName(FullName) {}
   };
 
   using StateFromCmdLine = CheckerInfo::StateFromCmdLine;
