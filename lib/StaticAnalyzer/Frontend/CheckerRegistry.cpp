@@ -283,12 +283,12 @@ void CheckerRegistry::addChecker(InitializationFunction Rfn,
 
 void CheckerRegistry::addDependency(StringRef FullName, StringRef Dependency) {
   auto CheckerIt = binaryFind(Checkers, FullName);
-  assert(CheckerIt != Checkers.end() &&
+  assert(CheckerIt->FullName == FullName &&
          "Failed to find the checker while attempting to set up its "
          "dependencies!");
 
   auto DependencyIt = binaryFind(Checkers, Dependency);
-  assert(DependencyIt != Checkers.end() &&
+  assert(DependencyIt->FullName == Dependency &&
          "Failed to find the dependency of a checker!");
 
   CheckerIt->Dependencies.emplace_back(&*DependencyIt);
