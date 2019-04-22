@@ -190,8 +190,6 @@ public:
 
   void printNoteMsg(llvm::raw_ostream &Out) const;
 
-  ~FieldChainInfo() { dumpElementRegions(); }
-
 #if !defined(NDEBUG) || defined(LLVM_ENABLE_DUMP)
   LLVM_DUMP_METHOD void dump() { printNoteMsg(llvm::errs()); }
 
