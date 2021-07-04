@@ -287,6 +287,15 @@ ANALYZER_OPTION(bool, DisplayCTUProgress, "display-ctu-progress",
                 "the analyzer's progress related to ctu.",
                 false)
 
+ANALYZER_OPTION(bool, ShouldDumpConstraintInfo, "dump-constraint-info",
+                "Returns true if contraint information should be included in "
+                "the plist ouput for each controlflow and event pieces.", false)
+
+ANALYZER_OPTION(bool, ShouldDumpStateInfo, "dump-state-info",
+                "Returns true if ProgramState information should be included "
+                "in the plist ouput for each controlflow and event pieces.",
+                false)
+
 //===----------------------------------------------------------------------===//
 // Unsinged analyzer options.
 //===----------------------------------------------------------------------===//

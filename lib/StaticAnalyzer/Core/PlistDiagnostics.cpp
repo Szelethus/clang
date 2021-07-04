@@ -138,6 +138,10 @@ private:
                             unsigned indent, unsigned depth);
   void ReportNote(raw_ostream &o, const PathDiagnosticNotePiece& P,
                   unsigned indent);
+
+  void ReportConstraintsAsEvent(raw_ostream &o,
+                                const PathDiagnosticPiece& P,
+                                unsigned indent);
 };
 
 } // end of anonymous namespace
@@ -210,12 +214,75 @@ void PlistPrinter::EmitMessage(raw_ostream &o, StringRef Message,
   EmitString(o, Message) << '\n';
 }
 
+static void EmitConstraints(raw_ostream &o,
+                            const SourceManager &SM,
+                            const FIDMap& FM,
+                            const InternalInfoMap &Map,
+                            unsigned indent) {
+  if (Map.empty())
+    return;
+
+  Indent(o, indent) << "<key>internalinfos</key>\n";
+  Indent(o, indent) << "<array>\n";
+  ++indent;
+  for (const auto &Info : Map) {
+    ++indent;
+
+		Info.printPlist(o, SM, FM, indent);
+
+    --indent;
+  }
+  --indent;
+  Indent(o, indent) << "</array>\n";
+}
+
+// TODO: Change this hack to a command line option.
+// Since internal information isn't supported by CodeChecker just yet (duh),
+// we'll convert them to events.
+void PlistPrinter::ReportConstraintsAsEvent(raw_ostream &o,
+                                     const PathDiagnosticPiece& P,
+                                     unsigned indent) {
+  if (P.InternalInfos.empty())
+    return;
+
+  const SourceManager &SM = PP.getSourceManager();
+
+  Indent(o, indent) << "<dict>\n";
+  ++indent;
+
+  Indent(o, indent) << "<key>kind</key><string>event</string>\n";
+
+  // Output the location.
+  FullSourceLoc L = P.getLocation().asLocation();
+
+  Indent(o, indent) << "<key>location</key>\n";
+  EmitLocation(o, SM, L, FM, indent);
+
+  // Output the ranges (if any).
+  ArrayRef<SourceRange> Ranges2 = P.getRanges();
+  EmitRanges(o, Ranges2, indent);
+
+  llvm::SmallString<200> str;
+  llvm::raw_svector_ostream OS(str);
+  OS << ' ';
+  P.InternalInfos.dumpToStream(OS, SM);
+
+  // Output the text.
+  EmitMessage(o, OS.str(), indent);
+
+  // Finish up.
+  --indent;
+  Indent(o, indent); o << "</dict>\n";
+}
+
 void PlistPrinter::ReportControlFlow(raw_ostream &o,
                                      const PathDiagnosticControlFlowPiece& P,
                                      unsigned indent) {
 
   const SourceManager &SM = PP.getSourceManager();
   const LangOptions &LangOpts = PP.getLangOpts();
+
+  ReportConstraintsAsEvent(o, P, indent);
 
   Indent(o, indent) << "<dict>\n";
   ++indent;
@@ -260,6 +327,9 @@ void PlistPrinter::ReportControlFlow(raw_ostream &o,
     EmitString(o, s) << '\n';
   }
 
+  // Output constraints.
+  EmitConstraints(o, SM, FM, P.InternalInfos, indent);
+
   --indent;
   Indent(o, indent) << "</dict>\n";
 }
@@ -269,6 +339,7 @@ void PlistPrinter::ReportEvent(raw_ostream &o, const PathDiagnosticEventPiece& P
                                bool isKeyEvent) {
 
   const SourceManager &SM = PP.getSourceManager();
+  ReportConstraintsAsEvent(o, P, indent);
 
   Indent(o, indent) << "<dict>\n";
   ++indent;
@@ -296,9 +367,13 @@ void PlistPrinter::ReportEvent(raw_ostream &o, const PathDiagnosticEventPiece& P
   // Output the text.
   EmitMessage(o, P.getString(), indent);
 
+  // Output constraints.
+  EmitConstraints(o, SM, FM, P.InternalInfos, indent);
+
   // Finish up.
   --indent;
   Indent(o, indent); o << "</dict>\n";
+
 }
 
 void PlistPrinter::ReportCall(raw_ostream &o, const PathDiagnosticCallPiece &P,
@@ -523,6 +598,7 @@ void PlistDiagnostics::FlushDiagnosticsImpl(
       AddFID(FM, Fids, SM, Range.getBegin());
       AddFID(FM, Fids, SM, Range.getEnd());
     }
+    Piece.InternalInfos.addFIDs(FM, Fids, SM);
   };
 
   for (const PathDiagnostic *D : Diags) {
